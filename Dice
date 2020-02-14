@@ -1,91 +1,51 @@
 import random
-import time
-
-i = 0
-Player1Points = 0
-Player2Points = 0
-Player1Tiebreaker = 0
-Player2Tiebreaker = 0
-Winner_Points = 0
-
-logged_in1 = False
-logged_in2 = False
-while logged_in1 == False:
-    username = input('What is your username? ')
-    password = input('What is your password? ')
-    if username == 'User1' or username == 'User2':
-        if password == 'password':
-            print('Welcome, ', username, ' you have been successfully logged in.')
-            logged_in1 = True
-            user1 = username
-        else:
-            print('Incorrect password, try again')
-    else:
-        print('Incorrect username, try again')
-
-while logged_in2 == False:
-    username = input('What is your username? ')
-    password = input('What is your password? ')
-    if username == 'User1' or username == 'User2':
-        if password == 'password':
-            print('Welcome, ', username, ' you have been successfully logged in.')
-            logged_in2 = True
-            user2 = username
-        else:
-            print('Incorrect password, try again')
-    else:
-        print('Incorrect username, try again')
 
 
-def roll():
-    points = 0
+class Dice:
 
-    die1 = random.randint(1, 6)
+    def __init__(self, num_players, num_rounds, num_dices):
+        self.num_players = num_players
+        self.num_rounds = num_rounds
+        self.num_dices = num_dices
+        self.value = random.randint(1, 6)
+        self.dic = {}
+        self.list = []
 
-    die2 = random.randint(1, 6)
+    def game(self):
+        for i in range(self.num_rounds):
+            for k in range(self.num_dices):
+                self.value = random.randint(1, 6)
+                self.list.append(self.value)
+            for j in range(self.num_players):
+                guess = int(input('Try guessing the number player' + str(j) + str(' ')))
+                if guess not in self.list:
+                    if j in self.dic.keys():
+                        self.dic[j] -= 1
+                    else:
+                        self.dic[j] = -1
+                elif guess in self.list:
+                    n = self.list.count(guess)
+                    if j in self.dic.keys():
+                        self.dic[j] += n
+                    else:
+                        self.dic[j] = n
 
-    dietotal = die1 + die2
+        print(self.list)
+        self.list.clear()
 
-    points = points + dietotal
-
-    if dietotal % 2 == 0:
-        points = points + 10
-
-    else:
-        points = points - 5
-
-    if die1 == die2:
-        die3 = random.randint(1, 6)
-        points = points + die3
-
-    return (points)
+    def __str__(self):
+        return str(self.dic)
 
 
-for i in range(1, 5):
-    Player1Points += roll()
-    print('After this round ', user1, 'you now have: ', Player1Points, ' Points')
-    time.sleep(1)
-    Player2Points += roll()
-    print('After this round ', user2, 'you now have: ', Player2Points, ' Points')
-    time.sleep(1)
+def main():
+    nPlayers = int(input('How many players? '))
+    nRounds = int(input('How many rounds? '))
+    nDices = int(input('How many dices will be used? '))
+    game = Dice(nPlayers, nRounds, nDices)
+    game.game()
+    print(game)
 
-if Player1Points == Player2Points:
-    while Player1Tiebreaker == Player2Tiebreaker:
-        Player1Tiebreaker = random.randint(1, 6)
-        Player2Tiebreaker = random.randint(1, 6)
 
-    if Player1Tiebreaker > Player2Tiebreaker:
-        Player2Points = 0
-    elif Player2Tiebreaker > Player1Tiebreaker:
-        Player1Points = 0
+if __name__ == '__main__':
+    main()
 
-if Player1Points > Player2Points:
-    Winner_Points = Player1Points
-    winner_User = user1
-    winner = (Winner_Points, user1)
-elif Player2Points > Player1Points:
-    Winner_Points = Player2Points
-    winner = (Winner_Points, user2)
-    winner_User = user2
-
-print('Well done, ', winner_User, ' you won with ', Winner_Points, ' Points')
